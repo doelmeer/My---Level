@@ -73,10 +73,10 @@ function render(){
 }
 function home(c){
  const xp=state.profile?.global_xp||0,level=Math.floor(xp/1000)+1,into=xp%1000;
- c.innerHTML=`<div class="hero"><div class="muted">GLOBAL LEVEL</div><div class="heroRow"><b>LV ${level}</b><span>${xp.toLocaleString()} XP</span></div><div class="progress"><i style="width:${into/10}%"></i></div><div class="stats"><div><b>🔥 ${state.profile?.streak||0}</b><span>day streak</span></div><div><b>+${state.activities.reduce((s,a)=>s+(a.xp||0),0)}</b><span>loaded XP</span></div><div><b>${state.activities.reduce((s,a)=>s+(a.minutes||0),0)}m</b><span>logged time</span></div></div></div>
- <div class="two">${card(`<h2>Today’s Plan</h2>${state.plans.slice(0,4).map(planRow).join('')||'<p class="muted">No plans yet.</p>')}<button class="primary" onclick="state.page='plan';render()">Open planning</button>`)}
- ${card(`<h2>Quick Log</h2><p class="muted">Record a completed activity and earn XP.</p><button class="primary" onclick="quickLog()">＋ Log activity</button>`)}
- </div>`;
+ const planRows=state.plans.slice(0,4).map(planRow).join('')||'<p class="muted">No plans yet.</p>';
+ const todayCard=card('<h2>Today’s Plan</h2>'+planRows+'<button class="primary" onclick="state.page=\'plan\';render()">Open planning</button>');
+ const quickCard=card('<h2>Quick Log</h2><p class="muted">Record a completed activity and earn XP.</p><button class="primary" onclick="quickLog()">＋ Log activity</button>');
+ c.innerHTML='<div class="hero"><div class="muted">GLOBAL LEVEL</div><div class="heroRow"><b>LV '+level+'</b><span>'+xp.toLocaleString()+' XP</span></div><div class="progress"><i style="width:'+into/10+'%"></i></div><div class="stats"><div><b>🔥 '+(state.profile?.streak||0)+'</b><span>day streak</span></div><div><b>+'+state.activities.reduce((s,a)=>s+(a.xp||0),0)+'</b><span>loaded XP</span></div><div><b>'+state.activities.reduce((s,a)=>s+(a.minutes||0),0)+'m</b><span>logged time</span></div></div></div><div class="two">'+todayCard+quickCard+'</div>';
 }
 function planRow(p){return `<div class="row"><span class="emoji">${icon[p.category]||'⭐'}</span><div class="grow"><b>${esc(p.name)}</b><small>${esc(p.category)} · ${p.duration_minutes} min</small></div>${p.completed?'<span class="green">✓</span>':`<button class="secondary small" onclick="finishPlan('${p.id}')">Complete</button>`}</div>`}
 function plan(c){c.innerHTML=card(`<div class="between"><h2>Plan your day</h2><button class="primary" onclick="newPlan()">＋ Add plan</button></div>${state.plans.map(planRow).join('')||'<p class="muted">Create your first plan.</p>'}`)}
